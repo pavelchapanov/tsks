@@ -87,12 +87,14 @@
             color: var(--color-text);
         }
 
+        /* ВЕРХНЯЯ ПАНЕЛЬ – 3‑й ВАРИАНТ */
         .toolbar {
             display: flex;
-            gap: var(--space-6);
-            margin-bottom: var(--space-12);
             flex-wrap: wrap;
             align-items: center;
+            column-gap: var(--space-6);
+            row-gap: 8px;
+            margin-bottom: var(--space-12);
             position: sticky;
             top: 0;
             background-color: var(--color-background);
@@ -100,39 +102,9 @@
             padding: var(--space-6) 0;
         }
 
-        .sort-buttons {
-            display: flex;
-            gap: var(--space-3);
-            flex-wrap: wrap;
-            font-size: 11px;
-        }
-
-        .sort-btn {
-            padding: var(--space-3) var(--space-6);
-            background-color: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-base);
-            color: var(--color-text);
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .sort-btn.active {
-            background-color: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
-        }
-
-        .sort-btn:hover {
-            background-color: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
-        }
-
         .search-box {
-            flex: 1;
-            min-width: 120px;
+            flex: 1 1 auto;
+            min-width: 240px;
             padding: var(--space-6) var(--space-8);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-base);
@@ -164,6 +136,37 @@
             background-color: var(--color-primary-hover);
         }
 
+        .sort-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .sort-btn {
+            padding: 4px 10px;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            color: var(--color-text);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sort-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .sort-btn:hover {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
         .table-wrapper {
             background-color: transparent;
             border-radius: 0;
@@ -172,9 +175,10 @@
             padding-bottom: 70px;
         }
 
+        /* 2 КАРТОЧКИ В СТРОКЕ */
         .cards-view {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-6);
         }
 
@@ -184,10 +188,18 @@
             border-radius: var(--radius-base);
             padding: 0;
             box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .task-card:hover {
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        /* Выбранная задача занимает всю ширину */
+        .task-card.selected {
+            grid-column: span 2;
         }
 
         .task-header {
@@ -263,53 +275,15 @@
             align-items: center;
         }
 
-        .status-badge,
-        .priority-badge,
-        .payment-badge {
-            display: inline-block;
-            padding: var(--space-2) var(--space-6);
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 500;
-            text-align: center;
-            white-space: nowrap;
-        }
+        .status-ready { background-color: #FFC107; color: #333; }
+        .status-in-progress { background-color: #9E9E9E; color: white; }
+        .status-not-started { background-color: #FFFFFF; color: #333; border: 1px solid #ccc; }
 
-        .status-ready {
-            background-color: #FFC107;
-            color: #333;
-        }
+        .priority-low { background-color: #76FF03; color: #333; }
+        .priority-high { background-color: #FF3D00; color: white; }
 
-        .status-in-progress {
-            background-color: #9E9E9E;
-            color: white;
-        }
-
-        .status-not-started {
-            background-color: #FFFFFF;
-            color: #333;
-            border: 1px solid #ccc;
-        }
-
-        .priority-low {
-            background-color: #76FF03;
-            color: #333;
-        }
-
-        .priority-high {
-            background-color: #FF3D00;
-            color: white;
-        }
-
-        .payment-awaiting {
-            background-color: #FF9800;
-            color: white;
-        }
-
-        .payment-paid {
-            background-color: var(--color-green-500);
-            color: white;
-        }
+        .payment-awaiting { background-color: #FF9800; color: white; }
+        .payment-paid { background-color: var(--color-green-500); color: white; }
 
         .editable-select,
         .editable-input {
@@ -445,12 +419,6 @@
         .btn-cancel:hover {
             opacity: 0.8;
         }
-
-        .checkbox {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-        }
     </style>
 </head>
 <body>
@@ -480,7 +448,7 @@
         </div>
     </div>
 
-    <!-- Modal for adding/editing task -->
+    <!-- Модалка -->
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -557,6 +525,7 @@
 
         let editingId = null;
         let currentSort = null;
+        let selectedTaskId = null;
 
         const modal = document.getElementById('taskModal');
         const taskForm = document.getElementById('taskForm');
@@ -601,11 +570,12 @@
             }
 
             saveTasks();
-            renderTasks();
+            renderTasksWithSort(getFilteredTasks());
             closeTaskModal();
         }
 
-        function editTask(id) {
+        function editTask(event, id) {
+            event.stopPropagation();
             const task = tasks.find(t => t.id === id);
             editingId = id;
             document.getElementById('modalTitle').textContent = 'Редактировать задачу';
@@ -618,11 +588,13 @@
             modal.style.display = 'block';
         }
 
-        function deleteTask(id) {
+        function deleteTask(event, id) {
+            event.stopPropagation();
             if (confirm('Удалить эту задачу?')) {
                 tasks = tasks.filter(t => t.id !== id);
+                if (selectedTaskId === id) selectedTaskId = null;
                 saveTasks();
-                renderTasks();
+                renderTasksWithSort(getFilteredTasks());
             }
         }
 
@@ -640,7 +612,7 @@
             const today = new Date();
             const deadlineDate = new Date(deadline);
             const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-            
+
             if (daysLeft <= 3 && daysLeft > 0) {
                 return 'rgba(255, 152, 0, 0.15)';
             } else if (daysLeft <= 0) {
@@ -649,15 +621,21 @@
             return 'transparent';
         }
 
+        function selectTask(event, taskId) {
+            event.stopPropagation();
+            selectedTaskId = selectedTaskId === taskId ? null : taskId;
+            renderTasksWithSort(getFilteredTasks());
+        }
+
         function renderTasks(tasksToShow = tasks) {
             const tasksList = document.getElementById('tasksList');
-            tasksList.innerHTML = tasksToShow.map(task => `
-                <div class="task-card">
+            const html = tasksToShow.map(task => `
+                <div class="task-card ${selectedTaskId === task.id ? 'selected' : ''}" onclick="selectTask(event, ${task.id})">
                     <div class="task-header">
                         <div class="task-name">${task.name}</div>
                         <div class="task-actions">
-                            <span class="icon" onclick="editTask(${task.id})" title="Редактировать">✏️</span>
-                            <span class="icon" onclick="deleteTask(${task.id})" title="Удалить">🗑️</span>
+                            <span class="icon" onclick="editTask(event, ${task.id})" title="Редактировать">✏️</span>
+                            <span class="icon" onclick="deleteTask(event, ${task.id})" title="Удалить">🗑️</span>
                         </div>
                     </div>
                     <div class="task-details">
@@ -704,12 +682,13 @@
                     </div>
                 </div>
             `).join('');
+            tasksList.innerHTML = html;
             updateTotalBudget();
         }
 
         function filterTasks() {
             const query = searchBox.value.toLowerCase();
-            const filtered = tasks.filter(task => 
+            const filtered = tasks.filter(task =>
                 task.name.toLowerCase().includes(query)
             );
             renderTasksWithSort(filtered);
@@ -733,14 +712,14 @@
 
         function getFilteredTasks() {
             const query = searchBox.value.toLowerCase();
-            return tasks.filter(task => 
+            return tasks.filter(task =>
                 task.name.toLowerCase().includes(query)
             );
         }
 
         function getSortedTasks(tasksToSort) {
             if (!currentSort) return tasksToSort;
-            
+
             const sorted = [...tasksToSort];
             if (currentSort === 'deadline') {
                 sorted.sort((a, b) => {
@@ -783,11 +762,10 @@
             document.getElementById('totalBudget').textContent = total.toLocaleString('ru-RU') + ' Р';
         }
 
-        // Load and initial render
+        // Инициализация
         loadTasks();
         renderTasks();
 
-        // Event listeners
         addTaskBtn.addEventListener('click', openAddModal);
         closeModal.addEventListener('click', closeTaskModal);
         cancelBtn.addEventListener('click', closeTaskModal);

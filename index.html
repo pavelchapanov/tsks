@@ -39,21 +39,28 @@
             --color-border: rgba(94, 82, 64, 0.2);
 
             --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-family-mono: 'Monaco', monospace;
             --font-size-sm: 12px;
             --font-size-base: 14px;
+            --font-size-md: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
             --space-4: 4px;
             --space-8: 8px;
             --space-12: 12px;
             --space-16: 16px;
             --space-20: 20px;
             --space-24: 24px;
+            --space-32: 32px;
             --radius-base: 8px;
             --radius-lg: 12px;
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: var(--font-family-base);
@@ -64,9 +71,14 @@
             line-height: 1.5;
         }
 
-        .container { max-width: 100%; margin: 0 auto; }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
 
-        header { margin-bottom: var(--space-16); }
+        header {
+            margin-bottom: var(--space-16);
+        }
 
         h1 {
             margin: 0;
@@ -75,14 +87,12 @@
             color: var(--color-text);
         }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
         .toolbar {
             display: flex;
+            gap: var(--space-6);
+            margin-bottom: var(--space-12);
             flex-wrap: wrap;
             align-items: center;
-            column-gap: var(--space-6);
-            row-gap: 8px;
-            margin-bottom: var(--space-12);
             position: sticky;
             top: 0;
             background-color: var(--color-background);
@@ -90,55 +100,18 @@
             padding: var(--space-6) 0;
         }
 
-        /* ЕДИНАЯ ВЫСОТА ДЛЯ ПОИСКА/КНОПОК/СОРТА */
-        .search-box,
-        .btn,
-        .sort-btn {
-            padding: 4px 10px;
-            font-size: 11px;
-            border-radius: var(--radius-base);
-            height: 28px;
-        }
-
-        .search-box {
-            flex: 1 1 auto;
-            min-width: 240px;
-            border: 1px solid var(--color-border);
-            background-color: var(--color-surface);
-            color: var(--color-text);
-        }
-
-        .btn {
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-4);
-            white-space: nowrap;
-        }
-
-        /* "Новая" шире примерно в 2 раза */
-        .btn-primary {
-            background-color: var(--color-primary);
-            color: white;
-            padding-inline: 20px;
-        }
-
-        .btn-primary:hover { background-color: var(--color-primary-hover); }
-
         .sort-buttons {
             display: flex;
+            gap: var(--space-3);
             flex-wrap: wrap;
-            width: 100%;
-            gap: 8px;
             font-size: 11px;
         }
 
         .sort-btn {
+            padding: var(--space-3) var(--space-6);
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
             color: var(--color-text);
             cursor: pointer;
             font-weight: 500;
@@ -157,6 +130,40 @@
             border-color: var(--color-primary);
         }
 
+        .search-box {
+            flex: 1;
+            min-width: 120px;
+            padding: var(--space-6) var(--space-8);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-sm);
+            background-color: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        .btn {
+            padding: var(--space-6) var(--space-10);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-4);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
         .table-wrapper {
             background-color: transparent;
             border-radius: 0;
@@ -165,7 +172,6 @@
             padding-bottom: 70px;
         }
 
-        /* 2 КАРТОЧКИ В СТРОКЕ, БЕЗ УВЕЛИЧЕНИЯ ПРИ НАЖАТИИ */
         .cards-view {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -178,42 +184,39 @@
             border-radius: var(--radius-base);
             padding: 0;
             box-shadow: var(--shadow-sm);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .task-card:hover {
             box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
+            transform: scale(1.05);
         }
 
-        /* ШАПКА КАРТОЧКИ ВЫРАВНЕНА С "Статус" */
+        .task-card.selected {
+            grid-column: span 2;
+            transform: scale(1);
+        }
+
         .task-header {
-            display: grid;
-            grid-template-columns: 80px 1fr auto;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            column-gap: var(--space-8);
-            padding: 10px var(--space-8);
+            gap: var(--space-4);
+            padding: var(--space-6) var(--space-8);
             border-bottom: 1px solid var(--color-border);
             background-color: #f8f8f8;
-        }
-
-        .task-header::before {
-            content: 'Статус';
-            font-weight: 500;
-            font-size: 11px;
-            color: transparent;
         }
 
         .task-name {
             font-weight: 600;
             color: var(--color-text);
             font-size: 13px;
-            align-self: center;
+            flex: 1;
         }
 
         .task-actions {
             display: flex;
-            align-items: center;
             gap: var(--space-4);
         }
 
@@ -226,7 +229,9 @@
             font-size: 16px;
         }
 
-        .icon:hover { opacity: 1; }
+        .icon:hover {
+            opacity: 1;
+        }
 
         .task-details {
             display: flex;
@@ -242,7 +247,9 @@
             border-bottom: 1px solid rgba(94, 82, 64, 0.08);
         }
 
-        .task-field:last-child { border-bottom: none; }
+        .task-field:last-child {
+            border-bottom: none;
+        }
 
         .field-label {
             font-weight: 500;
@@ -264,15 +271,53 @@
             align-items: center;
         }
 
-        .status-ready { background-color: #FFC107; color: #333; }
-        .status-in-progress { background-color: #9E9E9E; color: white; }
-        .status-not-started { background-color: #FFFFFF; color: #333; border: 1px solid #ccc; }
+        .status-badge,
+        .priority-badge,
+        .payment-badge {
+            display: inline-block;
+            padding: var(--space-2) var(--space-6);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
 
-        .priority-low { background-color: #76FF03; color: #333; }
-        .priority-high { background-color: #FF3D00; color: white; }
+        .status-ready {
+            background-color: #FFC107;
+            color: #333;
+        }
 
-        .payment-awaiting { background-color: #FF9800; color: white; }
-        .payment-paid { background-color: var(--color-green-500); color: white; }
+        .status-in-progress {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .status-not-started {
+            background-color: #FFFFFF;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        .priority-low {
+            background-color: #76FF03;
+            color: #333;
+        }
+
+        .priority-high {
+            background-color: #FF3D00;
+            color: white;
+        }
+
+        .payment-awaiting {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .payment-paid {
+            background-color: var(--color-green-500);
+            color: white;
+        }
 
         .editable-select,
         .editable-input {
@@ -352,7 +397,7 @@
 
         .modal-header h2 {
             margin: 0;
-            font-size: 16px;
+            font-size: var(--font-size-lg);
         }
 
         .close-btn {
@@ -364,7 +409,9 @@
             padding: 0;
         }
 
-        .form-group { margin-bottom: var(--space-10); }
+        .form-group {
+            margin-bottom: var(--space-10);
+        }
 
         .form-group label {
             display: block;
@@ -397,14 +444,21 @@
             background-color: var(--color-gray-300);
             color: white;
             border: none;
-            padding: var(--space-4) var(--space-10);
+            padding: var(--space-6) var(--space-12);
             border-radius: var(--radius-base);
             cursor: pointer;
             font-weight: 500;
-            height: 28px;
         }
 
-        .btn-cancel:hover { opacity: 0.8; }
+        .btn-cancel:hover {
+            opacity: 0.8;
+        }
+
+        .checkbox {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
     </style>
 </head>
 <body>
@@ -434,7 +488,7 @@
         </div>
     </div>
 
-    <!-- Модалка -->
+    <!-- Modal for adding/editing task -->
     <div id="taskModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -555,11 +609,12 @@
             }
 
             saveTasks();
-            renderTasksWithSort(getFilteredTasks());
+            renderTasks();
             closeTaskModal();
         }
 
-        function editTask(id) {
+        function editTask(event, id) {
+            event.stopPropagation();
             const task = tasks.find(t => t.id === id);
             editingId = id;
             document.getElementById('modalTitle').textContent = 'Редактировать задачу';
@@ -572,11 +627,13 @@
             modal.style.display = 'block';
         }
 
-        function deleteTask(id) {
+        function deleteTask(event, id) {
+            event.stopPropagation();
             if (confirm('Удалить эту задачу?')) {
                 tasks = tasks.filter(t => t.id !== id);
+                selectedTaskId = null;
                 saveTasks();
-                renderTasksWithSort(getFilteredTasks());
+                renderTasks();
             }
         }
 
@@ -594,7 +651,7 @@
             const today = new Date();
             const deadlineDate = new Date(deadline);
             const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
-
+            
             if (daysLeft <= 3 && daysLeft > 0) {
                 return 'rgba(255, 152, 0, 0.15)';
             } else if (daysLeft <= 0) {
@@ -605,13 +662,13 @@
 
         function renderTasks(tasksToShow = tasks) {
             const tasksList = document.getElementById('tasksList');
-            const html = tasksToShow.map(task => `
-                <div class="task-card">
+            tasksList.innerHTML = tasksToShow.map(task => `
+                <div class="task-card" onclick="selectTask(event, ${task.id})">
                     <div class="task-header">
                         <div class="task-name">${task.name}</div>
                         <div class="task-actions">
-                            <span class="icon" onclick="event.stopPropagation(); editTask(${task.id});" title="Редактировать">✏️</span>
-                            <span class="icon" onclick="event.stopPropagation(); deleteTask(${task.id});" title="Удалить">🗑️</span>
+                            <span class="icon" onclick="editTask(${task.id})" title="Редактировать">✏️</span>
+                            <span class="icon" onclick="deleteTask(${task.id})" title="Удалить">🗑️</span>
                         </div>
                     </div>
                     <div class="task-details">
@@ -658,13 +715,12 @@
                     </div>
                 </div>
             `).join('');
-            tasksList.innerHTML = html;
             updateTotalBudget();
         }
 
         function filterTasks() {
             const query = searchBox.value.toLowerCase();
-            const filtered = tasks.filter(task =>
+            const filtered = tasks.filter(task => 
                 task.name.toLowerCase().includes(query)
             );
             renderTasksWithSort(filtered);
@@ -688,14 +744,14 @@
 
         function getFilteredTasks() {
             const query = searchBox.value.toLowerCase();
-            return tasks.filter(task =>
+            return tasks.filter(task => 
                 task.name.toLowerCase().includes(query)
             );
         }
 
         function getSortedTasks(tasksToSort) {
             if (!currentSort) return tasksToSort;
-
+            
             const sorted = [...tasksToSort];
             if (currentSort === 'deadline') {
                 sorted.sort((a, b) => {
@@ -738,9 +794,27 @@
             document.getElementById('totalBudget').textContent = total.toLocaleString('ru-RU') + ' Р';
         }
 
-        loadTasks();
-        renderTasks();
+        let selectedTaskId = null;
 
+        function selectTask(event, taskId) {
+            event.stopPropagation();
+            selectedTaskId = selectedTaskId === taskId ? null : taskId;
+            renderTasks(getSortedTasks(getFilteredTasks()));
+        }
+
+        function renderTasks(tasksToShow = tasks) {
+            const tasksList = document.getElementById('tasksList');
+            const html = tasksToShow.map(task => `
+                <div class="task-card ${selectedTaskId === task.id ? 'selected' : ''}" onclick="selectTask(event, ${task.id})">
+                    <div class="task-header">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-actions">
+                            <span class="icon" onclick="editTask(event, ${task.id})" title="Редактировать">✏️</span>
+                            <span class="icon" onclick="deleteTask(event, ${task.id})" title="Удалить">🗑️</span>
+                        </div>
+                    </div>
+
+        // Event listeners
         addTaskBtn.addEventListener('click', openAddModal);
         closeModal.addEventListener('click', closeTaskModal);
         cancelBtn.addEventListener('click', closeTaskModal);

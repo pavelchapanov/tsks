@@ -174,7 +174,6 @@
 
         .cards-view {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
             gap: var(--space-6);
         }
 
@@ -184,18 +183,10 @@
             border-radius: var(--radius-base);
             padding: 0;
             box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
         .task-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: scale(1.05);
-        }
-
-        .task-card.selected {
-            grid-column: span 2;
-            transform: scale(1);
+            box-shadow: var(--shadow-sm);
         }
 
         .task-header {
@@ -613,8 +604,7 @@
             closeTaskModal();
         }
 
-        function editTask(event, id) {
-            event.stopPropagation();
+        function editTask(id) {
             const task = tasks.find(t => t.id === id);
             editingId = id;
             document.getElementById('modalTitle').textContent = 'Редактировать задачу';
@@ -627,11 +617,9 @@
             modal.style.display = 'block';
         }
 
-        function deleteTask(event, id) {
-            event.stopPropagation();
+        function deleteTask(id) {
             if (confirm('Удалить эту задачу?')) {
                 tasks = tasks.filter(t => t.id !== id);
-                selectedTaskId = null;
                 saveTasks();
                 renderTasks();
             }
@@ -663,7 +651,7 @@
         function renderTasks(tasksToShow = tasks) {
             const tasksList = document.getElementById('tasksList');
             tasksList.innerHTML = tasksToShow.map(task => `
-                <div class="task-card" onclick="selectTask(event, ${task.id})">
+                <div class="task-card">
                     <div class="task-header">
                         <div class="task-name">${task.name}</div>
                         <div class="task-actions">
@@ -794,25 +782,9 @@
             document.getElementById('totalBudget').textContent = total.toLocaleString('ru-RU') + ' Р';
         }
 
-        let selectedTaskId = null;
-
-        function selectTask(event, taskId) {
-            event.stopPropagation();
-            selectedTaskId = selectedTaskId === taskId ? null : taskId;
-            renderTasks(getSortedTasks(getFilteredTasks()));
-        }
-
-        function renderTasks(tasksToShow = tasks) {
-            const tasksList = document.getElementById('tasksList');
-            const html = tasksToShow.map(task => `
-                <div class="task-card ${selectedTaskId === task.id ? 'selected' : ''}" onclick="selectTask(event, ${task.id})">
-                    <div class="task-header">
-                        <div class="task-name">${task.name}</div>
-                        <div class="task-actions">
-                            <span class="icon" onclick="editTask(event, ${task.id})" title="Редактировать">✏️</span>
-                            <span class="icon" onclick="deleteTask(event, ${task.id})" title="Удалить">🗑️</span>
-                        </div>
-                    </div>
+        // Load and initial render
+        loadTasks();
+        renderTasks();
 
         // Event listeners
         addTaskBtn.addEventListener('click', openAddModal);

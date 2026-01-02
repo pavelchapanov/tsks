@@ -67,7 +67,7 @@
             background-color: var(--color-background);
             color: var(--color-text);
             margin: 0;
-            padding: var(--space-16);
+            padding: var(--space-12);
             line-height: 1.5;
         }
 
@@ -77,38 +77,38 @@
         }
 
         header {
-            margin-bottom: var(--space-20);
+            margin-bottom: var(--space-16);
         }
 
         h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--color-text);
         }
 
         .toolbar {
             display: flex;
-            gap: var(--space-8);
-            margin-bottom: var(--space-16);
+            gap: var(--space-6);
+            margin-bottom: var(--space-12);
             flex-wrap: wrap;
             align-items: center;
             position: sticky;
             top: 0;
             background-color: var(--color-background);
             z-index: 50;
-            padding: var(--space-8) 0;
+            padding: var(--space-6) 0;
         }
 
         .sort-buttons {
             display: flex;
-            gap: var(--space-4);
+            gap: var(--space-3);
             flex-wrap: wrap;
-            font-size: var(--font-size-sm);
+            font-size: 11px;
         }
 
         .sort-btn {
-            padding: var(--space-4) var(--space-8);
+            padding: var(--space-3) var(--space-6);
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-base);
@@ -132,20 +132,20 @@
 
         .search-box {
             flex: 1;
-            min-width: 150px;
-            padding: var(--space-8) var(--space-12);
+            min-width: 120px;
+            padding: var(--space-6) var(--space-8);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-base);
-            font-size: var(--font-size-base);
+            font-size: var(--font-size-sm);
             background-color: var(--color-surface);
             color: var(--color-text);
         }
 
         .btn {
-            padding: var(--space-8) var(--space-12);
+            padding: var(--space-6) var(--space-10);
             border: none;
             border-radius: var(--radius-base);
-            font-size: var(--font-size-base);
+            font-size: var(--font-size-sm);
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -169,19 +169,20 @@
             border-radius: 0;
             overflow: visible;
             box-shadow: none;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
         }
 
         .cards-view {
             display: grid;
-            gap: var(--space-8);
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-6);
         }
 
         .task-card {
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-base);
-            padding: var(--space-8) var(--space-12);
+            padding: 0;
             box-shadow: var(--shadow-sm);
         }
 
@@ -192,15 +193,17 @@
         .task-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             gap: var(--space-4);
-            margin-bottom: var(--space-8);
+            padding: var(--space-6) var(--space-8);
+            border-bottom: 1px solid var(--color-border);
+            background-color: #f8f8f8;
         }
 
         .task-name {
             font-weight: 600;
             color: var(--color-text);
-            font-size: var(--font-size-base);
+            font-size: 13px;
             flex: 1;
         }
 
@@ -210,12 +213,12 @@
         }
 
         .icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
             opacity: 0.6;
             transition: opacity 0.2s;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .icon:hover {
@@ -223,18 +226,17 @@
         }
 
         .task-details {
-            display: grid;
-            gap: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
         .task-field {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-4);
-            padding: var(--space-4) 0;
+            align-items: stretch;
+            gap: 0;
+            font-size: 12px;
             border-bottom: 1px solid rgba(94, 82, 64, 0.08);
-            font-size: var(--font-size-sm);
         }
 
         .task-field:last-child {
@@ -244,22 +246,30 @@
         .field-label {
             font-weight: 500;
             color: var(--color-text-secondary);
-            font-size: var(--font-size-sm);
-            min-width: 60px;
+            font-size: 11px;
+            padding: var(--space-4) var(--space-8);
+            background-color: #f8f8f8;
+            width: 80px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid var(--color-border);
+            flex-shrink: 0;
         }
 
         .field-value {
             flex: 1;
-            text-align: right;
+            padding: var(--space-4) var(--space-8);
+            display: flex;
+            align-items: center;
         }
 
         .status-badge,
         .priority-badge,
         .payment-badge {
             display: inline-block;
-            padding: var(--space-4) var(--space-8);
+            padding: var(--space-2) var(--space-6);
             border-radius: 4px;
-            font-size: var(--font-size-sm);
+            font-size: 11px;
             font-weight: 500;
             text-align: center;
             white-space: nowrap;
@@ -303,11 +313,11 @@
 
         .editable-select,
         .editable-input {
-            padding: var(--space-6) var(--space-8);
+            padding: var(--space-4) var(--space-6);
             border: 1px solid var(--color-primary);
             border-radius: var(--radius-base);
             font-family: var(--font-family-base);
-            font-size: var(--font-size-base);
+            font-size: 12px;
             background-color: var(--color-surface);
             color: var(--color-text);
             cursor: pointer;
@@ -316,11 +326,11 @@
         }
 
         input[type="date"] {
-            padding: var(--space-6) var(--space-8);
+            padding: var(--space-4) var(--space-6);
             border: 1px solid var(--color-primary);
             border-radius: var(--radius-base);
             font-family: var(--font-family-base);
-            font-size: var(--font-size-base);
+            font-size: 12px;
             background-color: var(--color-surface);
             color: var(--color-text);
             cursor: pointer;
@@ -330,7 +340,7 @@
 
         .total-budget {
             background-color: var(--color-gray-200);
-            padding: var(--space-12);
+            padding: var(--space-10);
             position: fixed;
             bottom: 0;
             left: 0;
@@ -339,9 +349,10 @@
             border-radius: 0;
             display: flex;
             justify-content: center;
-            gap: var(--space-16);
+            align-items: center;
+            gap: var(--space-12);
             font-weight: 600;
-            font-size: var(--font-size-base);
+            font-size: 14px;
             z-index: 100;
             text-align: center;
         }
@@ -361,7 +372,7 @@
         .modal-content {
             background-color: var(--color-surface);
             margin: var(--space-16) auto;
-            padding: var(--space-20);
+            padding: var(--space-16);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-lg);
             width: 95%;
@@ -373,7 +384,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-16);
+            margin-bottom: var(--space-12);
         }
 
         .modal-header h2 {
@@ -391,12 +402,12 @@
         }
 
         .form-group {
-            margin-bottom: var(--space-12);
+            margin-bottom: var(--space-10);
         }
 
         .form-group label {
             display: block;
-            margin-bottom: var(--space-6);
+            margin-bottom: var(--space-4);
             font-weight: 500;
             font-size: var(--font-size-sm);
         }
@@ -405,7 +416,7 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: var(--space-8) var(--space-12);
+            padding: var(--space-8) var(--space-10);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-base);
             font-family: var(--font-family-base);
@@ -418,14 +429,14 @@
             display: flex;
             gap: var(--space-8);
             justify-content: flex-end;
-            margin-top: var(--space-16);
+            margin-top: var(--space-12);
         }
 
         .btn-cancel {
             background-color: var(--color-gray-300);
             color: white;
             border: none;
-            padding: var(--space-8) var(--space-16);
+            padding: var(--space-6) var(--space-12);
             border-radius: var(--radius-base);
             cursor: pointer;
             font-weight: 500;
@@ -452,10 +463,10 @@
             <input type="text" class="search-box" id="searchBox" placeholder="Поиск...">
             <button class="btn btn-primary" id="addTaskBtn">➕ Новая</button>
             <div class="sort-buttons">
-                <button class="sort-btn" onclick="sortTasks('deadline')">📅 Срок</button>
-                <button class="sort-btn" onclick="sortTasks('priority')">⚡ Приоритет</button>
-                <button class="sort-btn" onclick="sortTasks('budget')">💰 Бюджет</button>
-                <button class="sort-btn" onclick="sortTasks('payment')">💳 Оплата</button>
+                <button class="sort-btn" onclick="sortTasks('deadline')">Срок</button>
+                <button class="sort-btn" onclick="sortTasks('priority')">Приоритет</button>
+                <button class="sort-btn" onclick="sortTasks('budget')">Бюджет</button>
+                <button class="sort-btn" onclick="sortTasks('payment')">Оплата</button>
             </div>
         </div>
 
@@ -615,31 +626,6 @@
             }
         }
 
-        function getStatusText(status) {
-            const map = {
-                'ready': 'Готово',
-                'in-progress': 'Начато',
-                'not-started': 'Не начато'
-            };
-            return map[status] || status;
-        }
-
-        function getPriorityText(priority) {
-            const map = {
-                'low': 'Низкий',
-                'high': 'Высокий'
-            };
-            return map[priority] || priority;
-        }
-
-        function getPaymentText(payment) {
-            const map = {
-                'awaiting': 'Ожидает оплаты',
-                'paid': 'Оплачено'
-            };
-            return map[payment] || payment;
-        }
-
         function getStatusClass(status) {
             const map = {
                 'ready': 'status-ready',
@@ -647,22 +633,6 @@
                 'not-started': 'status-not-started'
             };
             return map[status] || 'status-not-started';
-        }
-
-        function getPriorityClass(priority) {
-            const map = {
-                'low': 'priority-low',
-                'high': 'priority-high'
-            };
-            return map[priority] || 'priority-low';
-        }
-
-        function getPaymentClass(payment) {
-            const map = {
-                'awaiting': 'payment-awaiting',
-                'paid': 'payment-paid'
-            };
-            return map[payment] || 'payment-awaiting';
         }
 
         function getDeadlineColor(deadline) {

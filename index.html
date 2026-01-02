@@ -90,9 +90,44 @@
         .toolbar {
             display: flex;
             gap: var(--space-8);
-            margin-bottom: var(--space-20);
+            margin-bottom: var(--space-16);
             flex-wrap: wrap;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--color-background);
+            z-index: 50;
+            padding: var(--space-8) 0;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            font-size: var(--font-size-sm);
+        }
+
+        .sort-btn {
+            padding: var(--space-4) var(--space-8);
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            color: var(--color-text);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sort-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .sort-btn:hover {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
         }
 
         .search-box {
@@ -130,47 +165,48 @@
         }
 
         .table-wrapper {
-            background-color: var(--color-surface);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            background-color: transparent;
+            border-radius: 0;
+            overflow: visible;
+            box-shadow: none;
+            padding-bottom: 80px;
         }
 
         .cards-view {
             display: grid;
-            gap: var(--space-12);
+            gap: var(--space-8);
         }
 
         .task-card {
             background-color: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            padding: var(--space-8) var(--space-12);
             box-shadow: var(--shadow-sm);
         }
 
         .task-card:hover {
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-sm);
         }
 
         .task-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: var(--space-8);
-            margin-bottom: var(--space-12);
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
         }
 
         .task-name {
             font-weight: 600;
             color: var(--color-text);
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-base);
             flex: 1;
         }
 
         .task-actions {
             display: flex;
-            gap: var(--space-8);
+            gap: var(--space-4);
         }
 
         .icon {
@@ -188,16 +224,17 @@
 
         .task-details {
             display: grid;
-            gap: var(--space-12);
+            gap: var(--space-4);
         }
 
         .task-field {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: var(--space-8);
-            padding: var(--space-8) 0;
-            border-bottom: 1px solid rgba(94, 82, 64, 0.1);
+            gap: var(--space-4);
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid rgba(94, 82, 64, 0.08);
+            font-size: var(--font-size-sm);
         }
 
         .task-field:last-child {
@@ -208,7 +245,7 @@
             font-weight: 500;
             color: var(--color-text-secondary);
             font-size: var(--font-size-sm);
-            min-width: 70px;
+            min-width: 60px;
         }
 
         .field-value {
@@ -291,14 +328,19 @@
 
         .total-budget {
             background-color: var(--color-gray-200);
-            padding: var(--space-16);
-            margin-top: var(--space-20);
-            border-radius: var(--radius-base);
+            padding: var(--space-12);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 2px solid var(--color-border);
+            border-radius: 0;
             display: flex;
             justify-content: space-between;
             gap: var(--space-16);
             font-weight: 600;
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-base);
+            z-index: 100;
         }
 
         .modal {
@@ -406,14 +448,21 @@
         <div class="toolbar">
             <input type="text" class="search-box" id="searchBox" placeholder="Поиск...">
             <button class="btn btn-primary" id="addTaskBtn">➕ Новая</button>
+            <div class="sort-buttons">
+                <button class="sort-btn" onclick="sortTasks('deadline')">📅 Срок</button>
+                <button class="sort-btn" onclick="sortTasks('priority')">⚡ Приоритет</button>
+                <button class="sort-btn" onclick="sortTasks('budget')">💰 Бюджет</button>
+                <button class="sort-btn" onclick="sortTasks('payment')">💳 Оплата</button>
+            </div>
         </div>
 
         <div class="table-wrapper">
             <div class="cards-view" id="tasksList"></div>
-            <div class="total-budget">
-                <span>Всего бюджета:</span>
-                <span id="totalBudget">0 Р</span>
-            </div>
+        </div>
+
+        <div class="total-budget">
+            <span>Всего бюджета:</span>
+            <span id="totalBudget">0 Р</span>
         </div>
     </div>
 
@@ -493,6 +542,7 @@
         }
 
         let editingId = null;
+        let currentSort = null;
 
         const modal = document.getElementById('taskModal');
         const taskForm = document.getElementById('taskForm');
@@ -689,7 +739,61 @@
             const filtered = tasks.filter(task => 
                 task.name.toLowerCase().includes(query)
             );
-            renderTasks(filtered);
+            renderTasksWithSort(filtered);
+        }
+
+        function sortTasks(field) {
+            currentSort = currentSort === field ? null : field;
+            updateSortButtons();
+            renderTasksWithSort(getFilteredTasks());
+        }
+
+        function updateSortButtons() {
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            if (currentSort) {
+                const fieldMap = { deadline: 0, priority: 1, budget: 2, payment: 3 };
+                document.querySelectorAll('.sort-btn')[fieldMap[currentSort]].classList.add('active');
+            }
+        }
+
+        function getFilteredTasks() {
+            const query = searchBox.value.toLowerCase();
+            return tasks.filter(task => 
+                task.name.toLowerCase().includes(query)
+            );
+        }
+
+        function getSortedTasks(tasksToSort) {
+            if (!currentSort) return tasksToSort;
+            
+            const sorted = [...tasksToSort];
+            if (currentSort === 'deadline') {
+                sorted.sort((a, b) => {
+                    if (!a.deadline) return 1;
+                    if (!b.deadline) return -1;
+                    return new Date(a.deadline) - new Date(b.deadline);
+                });
+            } else if (currentSort === 'priority') {
+                sorted.sort((a, b) => {
+                    const priorityOrder = { high: 0, low: 1 };
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                });
+            } else if (currentSort === 'budget') {
+                sorted.sort((a, b) => b.budget - a.budget);
+            } else if (currentSort === 'payment') {
+                sorted.sort((a, b) => {
+                    const paymentOrder = { awaiting: 0, paid: 1 };
+                    return paymentOrder[a.payment] - paymentOrder[b.payment];
+                });
+            }
+            return sorted;
+        }
+
+        function renderTasksWithSort(tasksToShow) {
+            const sorted = getSortedTasks(tasksToShow);
+            renderTasks(sorted);
         }
 
         function updateTask(id, field, value) {
@@ -697,7 +801,7 @@
             if (task) {
                 task[field] = value;
                 saveTasks();
-                renderTasks();
+                renderTasksWithSort(getFilteredTasks());
             }
         }
 

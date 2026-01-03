@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачи с входом по почте</title>
+    <style>
+        /* ====== БАЗОВЫЙ СТИЛЬ (укороченная версия) ====== */
+        :root {
+            --color-bg: #f8f8f4;
+            --color-surface: #fffef8;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-text: #13343b;
+            --color-text-secondary: #626c71;
+            --color-gray-200: #f5f5f5;
+            --color-gray-300: #a7a9a9;
+            --color-green-500: #34d399;
+
+            --font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+            --space-4: 4px;
+            --space-6: 6px;
+            --space-8: 8px;
+            --space-10: 10px;
+            --space-12: 12px;
+            --space-16: 16px;
+
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: var(--space-12);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-base);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 var(--space-8);
+            font-size: 20px;
+        }
+
+        /* ====== БЛОК АВТОРИЗАЦИИ ====== */
+
+        .auth-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-12);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-16);
+        }
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+
+        .auth-status {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-8);
+            align-items: center;
+        }
+
+        .auth-form input {
+            padding: var(--space-6) var(--space-8);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+            font-size: 12px;
+        }
+
+        .auth-form input[type="email"],
+        .auth-form input[type="password"] {
+            flex: 1 1 150px;
+            min-width: 0;
+        }
+
+        .btn {
+            padding: 6px 10px;
+            border-radius: var(--radius-base);
+            border: none;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-4);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+        }
+
+        .auth-error {
+            margin-top: var(--space-4);
+            font-size: 11px;
+            color: #b91c1c;
+        }
+
+        .auth-ok {
+            color: #15803d;
+        }
+
+        @media (max-width: 480px) {
+            .auth-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* ====== ТУЛБАР И КАРТОЧКИ ЗАДАЧ (как раньше, кратко) ====== */
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            column-gap: var(--space-6);
+            row-gap: 8px;
+            margin-bottom: var(--space-12);
+        }
+
+        .search-box,
+        .btn-toolbar,
+        .sort-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: var(--radius-base);
+            height: 30px;
+        }
+
+        .search-box {
+            flex: 1 1 100%;
+            min-width: 0;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+        }
+
+        @media (min-width: 600px) {
+            .search-box {
+                flex: 1 1 auto;
+                min-width: 240px;
+            }
+        }
+
+        .btn-toolbar {
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-4);
+            white-space: nowrap;
+            background-color: var(--color-primary);
+            color: white;
+            padding-inline: 18px;
+        }
+
+        .btn-toolbar:hover { background-color: var(--color-primary-hover); }
+
+        .sort-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .sort-btn {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+        }
+
+        .sort-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .table-wrapper {
+            padding-bottom: 70px;
+        }
+
+        .cards-view {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-6);
+        }
+
+        @media (min-width: 768px) {
+            .cards-view {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .task-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-8);
+            padding: 8px var(--space-8) 6px;
+            border-bottom: 1px solid var(--color-border);
+            background-color: #f8f8f8;
+        }
+
+        .task-name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .icon:hover { opacity: 1; }
+
+        .task-details { display: flex; flex-direction: column; }
+
+        .task-field {
+            display: flex;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(94, 82, 64, 0.08);
+        }
+
+        .task-field:last-child { border-bottom: none; }
+
+        .field-label {
+            width: 80px;
+            padding: var(--space-4) var(--space-8);
+            background-color: #f8f8f8;
+            border-right: 1px solid var(--color-border);
+            font-size: 11px;
+            color: var(--color-text-secondary);
+        }
+
+        .field-value {
+            flex: 1;
+            padding: var(--space-4) var(--space-8);
+        }
+
+        .editable-select,
+        .editable-input {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-primary);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-primary);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .total-budget {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-gray-200);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-10);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Модалка добавления/редактирования задачи можно добавить позже, сейчас упрощённо */
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📋 Задачи</h1>
+    </header>
+
+    <!-- ====== АВТОРИЗАЦИЯ ====== -->
+    <div class="auth-card">
+        <div class="auth-header">
+            <div>Вход по почте</div>
+            <div class="auth-status" id="authStatus">Не авторизован</div>
+        </div>
+        <form class="auth-form" id="authForm">
+            <input type="email" id="authEmail" placeholder="Email" required>
+            <input type="password" id="authPassword" placeholder="Пароль" required>
+            <button type="submit" class="btn btn-primary" id="loginBtn">Войти</button>
+            <button type="button" class="btn btn-ghost" id="registerBtn">Регистрация</button>
+            <button type="button" class="btn btn-ghost" id="logoutBtn" style="display:none;">Выйти</button>
+        </form>
+        <div class="auth-error" id="authMessage"></div>
+    </div>
+
+    <!-- ====== ПАНЕЛЬ И СПИСОК ЗАДАЧ (показываем только когда пользователь вошёл) ====== -->
+    <div id="appContent" style="display:none;">
+        <div class="toolbar">
+            <input type="text" class="search-box" id="searchBox" placeholder="Поиск...">
+            <button class="btn-toolbar" id="addTaskBtn">➕ Новая</button>
+            <div class="sort-buttons">
+                <button class="sort-btn" onclick="sortTasks('deadline')">Срок</button>
+                <button class="sort-btn" onclick="sortTasks('priority')">Приоритет</button>
+                <button class="sort-btn" onclick="sortTasks('budget')">Бюджет</button>
+                <button class="sort-btn" onclick="sortTasks('payment')">Оплата</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <div class="cards-view" id="tasksList"></div>
+        </div>
+
+        <div class="total-budget">
+            Всего бюджета: <span id="totalBudget">0 Р</span>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK через ES Modules -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // TODO: подставь сюда свой firebaseConfig из консоли Firebase
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        // остальное по желанию
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ====== DOM элементов ======
+    const authForm = document.getElementById('authForm');
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const authMessage = document.getElementById('authMessage');
+    const authStatus = document.getElementById('authStatus');
+    const appContent = document.getElementById('appContent');
+
+    let currentUser = null;
+    let tasks = [];
+    let currentSort = null;
+
+    // ====== АВТОРИЗАЦИЯ ======
+
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user) {
+            authStatus.textContent = `Вошёл: ${user.email}`;
+            authStatus.classList.add('auth-ok');
+            logoutBtn.style.display = 'inline-flex';
+            appContent.style.display = 'block';
+            authMessage.textContent = '';
+            loadTasksForUser();
+        } else {
+            authStatus.textContent = 'Не авторизован';
+            authStatus.classList.remove('auth-ok');
+            logoutBtn.style.display = 'none';
+            appContent.style.display = 'none';
+            tasks = [];
+        }
+    });
+
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        authMessage.textContent = '';
+        const email = authEmail.value.trim();
+        const password = authPassword.value.trim();
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+            authMessage.textContent = 'Ошибка входа: ' + (err.message || '');
+        }
+    });
+
+    registerBtn.addEventListener('click', async () => {
+        authMessage.textContent = '';
+        const email = authEmail.value.trim();
+        const password = authPassword.value.trim();
+        if (!email || !password) {
+            authMessage.textContent = 'Введите почту и пароль для регистрации';
+            return;
+        }
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            authMessage.textContent = 'Регистрация успешна, вы вошли.';
+            authMessage.classList.remove('auth-error');
+            authMessage.classList.add('auth-ok');
+        } catch (err) {
+            authMessage.classList.remove('auth-ok');
+            authMessage.classList.add('auth-error');
+            authMessage.textContent = 'Ошибка регистрации: ' + (err.message || '');
+        }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+        await signOut(auth);
+    });
+
+    // ====== ЛОКАЛЬНОЕ ХРАНИЛИЩЕ (ПОКА ЧТО) ======
+
+    function storageKey() {
+        return currentUser ? `tasks_${currentUser.uid}` : 'tasks_guest';
+    }
+
+    function loadTasksForUser() {
+        const stored = localStorage.getItem(storageKey());
+        if (stored) {
+            tasks = JSON.parse(stored);
+        } else {
+            tasks = [];
+        }
+        renderTasksWithSort(getFilteredTasks());
+    }
+
+    function saveTasks() {
+        localStorage.setItem(storageKey(), JSON.stringify(tasks));
+    }
+
+    // ====== ЛОГИКА ЗАДАЧ (упрощённо, без модалки) ======
+
+    const searchBox = document.getElementById('searchBox');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+
+    addTaskBtn.addEventListener('click', () => {
+        const name = prompt('Название задачи:');
+        if (!name) return;
+        const newTask = {
+            id: Date.now(),
+            name,
+            status: 'not-started',
+            priority: 'low',
+            deadline: '',
+            budget: 0,
+            payment: 'awaiting',
+        };
+        tasks.push(newTask);
+        saveTasks();
+        renderTasksWithSort(getFilteredTasks());
+    });
+
+    function editTask(id) {
+        const task = tasks.find(t => t.id === id);
+        if (!task) return;
+        const newName = prompt('Новое название задачи:', task.name);
+        if (!newName) return;
+        task.name = newName;
+        saveTasks();
+        renderTasksWithSort(getFilteredTasks());
+    }
+
+    function deleteTask(id) {
+        if (!confirm('Удалить задачу?')) return;
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasksWithSort(getFilteredTasks());
+    }
+
+    function updateTask(id, field, value) {
+        const task = tasks.find(t => t.id === id);
+        if (!task) return;
+        task[field] = value;
+        saveTasks();
+        renderTasksWithSort(getFilteredTasks());
+    }
+
+    function getDeadlineColor(deadline) {
+        if (!deadline) return 'transparent';
+        const today = new Date();
+        const d = new Date(deadline);
+        const daysLeft = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+        if (daysLeft <= 3 && daysLeft > 0) return 'rgba(255,152,0,0.15)';
+        if (daysLeft <= 0) return 'rgba(255,61,0,0.15)';
+        return 'transparent';
+    }
+
+    function renderTasks(tasksToShow = tasks) {
+        const list = document.getElementById('tasksList');
+        const html = tasksToShow.map(task => `
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-name">${task.name}</div>
+                    <div class="task-actions">
+                        <span class="icon" title="Редактировать"
+                              onclick="window._editTask(${task.id})">✏️</span>
+                        <span class="icon" title="Удалить"
+                              onclick="window._deleteTask(${task.id})">🗑️</span>
+                    </div>
+                </div>
+                <div class="task-details">
+                    <div class="task-field">
+                        <span class="field-label">Статус</span>
+                        <span class="field-value">
+                            <select class="editable-select"
+                                onchange="window._updateTask(${task.id}, 'status', this.value)">
+                                <option value="not-started" ${task.status === 'not-started' ? 'selected' : ''}>Не начато</option>
+                                <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>Начато</option>
+                                <option value="ready" ${task.status === 'ready' ? 'selected' : ''}>Готово</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="task-field">
+                        <span class="field-label">Приоритет</span>
+                        <span class="field-value">
+                            <select class="editable-select"
+                                onchange="window._updateTask(${task.id}, 'priority', this.value)">
+                                <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Низкий</option>
+                                <option value="high" ${task.priority === 'high' ? 'selected' : ''}>Высокий</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="task-field">
+                        <span class="field-label">Срок</span>
+                        <span class="field-value">
+                            <input type="date" class="editable-input" value="${task.deadline}"
+                                   onchange="window._updateTask(${task.id}, 'deadline', this.value)"
+                                   style="background-color:${getDeadlineColor(task.deadline)};">
+                        </span>
+                    </div>
+                    <div class="task-field">
+                        <span class="field-label">Бюджет</span>
+                        <span class="field-value">
+                            <input type="number" class="editable-input" value="${task.budget}"
+                                   onchange="window._updateTask(${task.id}, 'budget', parseInt(this.value)||0)">
+                        </span>
+                    </div>
+                    <div class="task-field">
+                        <span class="field-label">Оплата</span>
+                        <span class="field-value">
+                            <select class="editable-select"
+                                onchange="window._updateTask(${task.id}, 'payment', this.value)">
+                                <option value="awaiting" ${task.payment === 'awaiting' ? 'selected' : ''}>Ожидает</option>
+                                <option value="paid" ${task.payment === 'paid' ? 'selected' : ''}>Оплачено</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        list.innerHTML = html;
+        updateTotalBudget();
+    }
+
+    function updateTotalBudget() {
+        const total = tasks.reduce((sum, t) => sum + (t.budget || 0), 0);
+        document.getElementById('totalBudget').textContent =
+            total.toLocaleString('ru-RU') + ' Р';
+    }
+
+    function getFilteredTasks() {
+        const q = (searchBox.value || '').toLowerCase();
+        return tasks.filter(t => t.name.toLowerCase().includes(q));
+    }
+
+    searchBox.addEventListener('input', () => {
+        renderTasksWithSort(getFilteredTasks());
+    });
+
+    function sortTasks(field) {
+        currentSort = currentSort === field ? null : field;
+        document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+        if (currentSort) {
+            const map = { deadline: 0, priority: 1, budget: 2, payment: 3 };
+            document.querySelectorAll('.sort-btn')[map[currentSort]].classList.add('active');
+        }
+        renderTasksWithSort(getFilteredTasks());
+    }
+
+    function getSortedTasks(arr) {
+        if (!currentSort) return arr;
+        const sorted = [...arr];
+        if (currentSort === 'deadline') {
+            sorted.sort((a,b) => {
+                if (!a.deadline) return 1;
+                if (!b.deadline) return -1;
+                return new Date(a.deadline) - new Date(b.deadline);
+            });
+        } else if (currentSort === 'priority') {
+            const order = { high: 0, low: 1 };
+            sorted.sort((a,b) => order[a.priority] - order[b.priority]);
+        } else if (currentSort === 'budget') {
+            sorted.sort((a,b) => b.budget - a.budget);
+        } else if (currentSort === 'payment') {
+            const order = { awaiting: 0, paid: 1 };
+            sorted.sort((a,b) => order[a.payment] - order[b.payment]);
+        }
+        return sorted;
+    }
+
+    function renderTasksWithSort(arr) {
+        renderTasks(getSortedTasks(arr));
+    }
+
+    // Проброс функций в глобальный scope для onclick в шаблоне
+    window._editTask = editTask;
+    window._deleteTask = deleteTask;
+    window._updateTask = updateTask;
+</script>
+</body>
+</html>
